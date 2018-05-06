@@ -126,6 +126,7 @@ func (l *Log) out(level, format string, a []interface{}) {
 		}
 
 		if l.console {
+			l.mu.Lock()
 			switch level {
 			case "DEBG":
 				color.HiCyan(s)
@@ -146,6 +147,7 @@ func (l *Log) out(level, format string, a []interface{}) {
 				color.HiMagenta(s)
 				break
 			}
+			l.mu.Unlock()
 		}
 
 		if !strings.HasSuffix(s, "\n") {
