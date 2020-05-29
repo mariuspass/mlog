@@ -15,6 +15,9 @@ func main() {
 	// get the log instance
 	log = mlog.Get()
 
+	// set custom timestamp format
+	log.SetTimeFormat("02-01-2006 15:04:05")
+
 	// log to file log.txt
 	log.SetFileWriter("log.txt")
 
@@ -26,7 +29,6 @@ func main() {
 	log.Info("Info Message")
 	log.Warning("Warning Message")
 	// log.Critical("Critical Message")
-
 
 	// Messages with formatting (using format 'verbs' from: https://golang.org/pkg/fmt/)
 	println("")

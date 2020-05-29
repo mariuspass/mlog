@@ -15,9 +15,10 @@ import (
 
 // Log base struct
 type Log struct {
-	console bool
-	writer  io.Writer
-	mu      *sync.Mutex
+	timeFormat string
+	console    bool
+	writer     io.Writer
+	mu         *sync.Mutex
 }
 
 var (
@@ -26,8 +27,9 @@ var (
 
 func init() {
 	log = &Log{
-		console: true,
-		mu:      new(sync.Mutex),
+		timeFormat: "2006-01-02 15:04:05",
+		console:    true,
+		mu:         new(sync.Mutex),
 	}
 }
 
@@ -48,6 +50,15 @@ func (l *Log) AddWriter(writer io.Writer) {
 	} else {
 		l.writer = io.MultiWriter(l.writer, writer)
 	}
+	l.mu.Unlock()
+}
+
+// SetTimeFormat sets the log timestamp layout
+// see: https://golang.org/pkg/time/#Time.Format
+// default format is YYYY-MM-dd HH:mm:ss
+func (l *Log) SetTimeFormat(format string) {
+	l.mu.Lock()
+	l.timeFormat = format
 	l.mu.Unlock()
 }
 
@@ -113,7 +124,7 @@ func (l *Log) out(level, format string, a []interface{}) {
 	if l.console || l.writer != nil {
 		nf := "%s [%s]: "
 		s := ""
-		date := time.Now().Format("02-01-2006 15:04:05")
+		date := time.Now().Format(l.timeFormat)
 
 		if len(a) == 0 {
 			nf += "%v"
